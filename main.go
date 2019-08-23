@@ -11,9 +11,9 @@ func main() {
 	serviceName := os.Getenv("SERVICE_NAME")
 	fmt.Printf("Running on :%d", port)
 	path := fmt.Sprintf("/%s", serviceName)
+	healthPath := fmt.Sprintf("/%s/health", serviceName)
 	http.HandleFunc(path, handler)
-	http.HandleFunc("/health", handler)
-
+	http.HandleFunc(healthPath, health)
 	http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
 }
 
