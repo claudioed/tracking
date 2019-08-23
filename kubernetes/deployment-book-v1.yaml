@@ -31,13 +31,13 @@ spec:
             privileged: false
           livenessProbe:
             httpGet:
-              path: /book
+              path: /book/health
               port: 8080
               scheme: HTTP
             initialDelaySeconds: 180
           readinessProbe:
             httpGet:
-              path: /book
+              path: /book/health
               port: 8080
               scheme: HTTP
             initialDelaySeconds: 10

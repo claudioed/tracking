@@ -13,5 +13,5 @@ spec:
         jwksUri: "http://35.238.13.155/auth/realms/library/protocol/openid-connect/certs"
         trigger_rules:
           - excluded_paths:
-            - exact: /book/health
+              - exact: /book/health
   principalBinding: USE_ORIGIN
