@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: book-v1
+  labels:
+    version: v1
+    app: book
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: book
+  template:
+    metadata:
+      labels:
+        version: v1
+        app: book
+    spec:
+      containers:
+        - name: book
+          image: claudioed/tracking
+          imagePullPolicy: Always
+          env:
+            - name: SERVICE_NAME
+              value: book
+            - name: SERVICE_VERSION
+              value: v1
+          ports:
+            - containerPort: 8080
+          securityContext:
+            privileged: false
+          livenessProbe:
+            httpGet:
+              path: /book
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 180
+          readinessProbe:
+            httpGet:
+              path: /book
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 10
