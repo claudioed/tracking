@@ -1,17 +1,14 @@
 apiVersion: "authentication.istio.io/v1alpha1"
 kind: "Policy"
 metadata:
-  name: "book-api-auth-policy"
+  name: "c4-active-api-auth-policy"
 spec:
   targets:
-    - name: book
+    - name: c4-active
   origins:
     - jwt:
         audiences:
           - book
         issuer: "http://35.238.13.155/auth/realms/library"
         jwksUri: "http://35.238.13.155/auth/realms/library/protocol/openid-connect/certs"
-        trigger_rules:
-          - excluded_paths:
-            - exact: /book/health
   principalBinding: USE_ORIGIN
