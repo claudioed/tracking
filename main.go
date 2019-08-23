@@ -12,7 +12,7 @@ func main() {
 	fmt.Printf("Running on :%d", port)
 	path := fmt.Sprintf("/%s", serviceName)
 	http.HandleFunc(path, handler)
-
+	http.HandleFunc("/health", handler)
 
 	http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
 }
@@ -21,4 +21,10 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	serviceName := os.Getenv("SERVICE_NAME")
 	serviceVersion := os.Getenv("SERVICE_VERSION")
 	fmt.Fprintf(w, "service name %s version %s", serviceName, serviceVersion)
+}
+
+func health(w http.ResponseWriter, r *http.Request) {
+	serviceName := os.Getenv("SERVICE_NAME")
+	serviceVersion := os.Getenv("SERVICE_VERSION")
+	fmt.Fprintf(w, "UP %s %s", serviceName, serviceVersion)
 }
