@@ -1,45 +1,67 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: book-v1
+  name: driver-v1
   labels:
     version: v1
-    app: book
+    app: driver
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: book
+      app: driver
   template:
     metadata:
       labels:
         version: v1
-        app: book
+        app: driver
     spec:
       containers:
-        - name: book
+        - name: driver
           image: claudioed/tracking
           imagePullPolicy: Always
+          resources:
+            requests:
+              cpu: 50m
+              memory: 10Mi
+            limits:
+              cpu: 100m
+              memory: 500Mi
           env:
             - name: SERVICE_NAME
-              value: book
+              value: driver
             - name: SERVICE_VERSION
               value: v1
             - name: TARGET_SERVICE_HOST
-              value: v1
+              value: http://router:8080/router
           ports:
             - containerPort: 8080
           securityContext:
             privileged: false
           livenessProbe:
             httpGet:
-              path: /book/health
+              path: /driver/health
               port: 8080
               scheme: HTTP
-            initialDelaySeconds: 180
+            initialDelaySeconds: 1
           readinessProbe:
             httpGet:
-              path: /book/health
+              path: /driver/health
               port: 8080
               scheme: HTTP
-            initialDelaySeconds: 10
+            initialDelaySeconds: 1
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: driver
+  labels:
+    expose: "true"
+spec:
+  ports:
+    - name: http
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    app: driver

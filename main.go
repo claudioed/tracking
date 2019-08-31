@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 )
@@ -26,5 +28,18 @@ func handler(w http.ResponseWriter, r *http.Request) {
 func health(w http.ResponseWriter, r *http.Request) {
 	serviceName := os.Getenv("SERVICE_NAME")
 	serviceVersion := os.Getenv("SERVICE_VERSION")
-	fmt.Fprintf(w, "UP %s %s", serviceName, serviceVersion)
+	fmt.Fprintf(w, "UP %s %s ", serviceName, serviceVersion)
+}
+
+func reqOtherService() string {
+	resp, err := http.Get(os.Getenv("TARGET_SERVICE_HOST"))
+	if err != nil {
+		log.Fatalln(err)
+	}
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	log.Println(string(body))
+	return string(body)
 }
