@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: price-v2
+  labels:
+    version: v2
+    app: price
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: price
+  template:
+    metadata:
+      labels:
+        version: v2
+        app: price
+    spec:
+      containers:
+        - name: price
+          image: claudioed/tracking
+          imagePullPolicy: Always
+          resources:
+            requests:
+              cpu: 50m
+              memory: 10Mi
+            limits:
+              cpu: 100m
+              memory: 500Mi
+          env:
+            - name: SERVICE_NAME
+              value: price
+            - name: SERVICE_VERSION
+              value: v2
+            - name: TARGET_SERVICE_HOST
+              value: http://billing:8080/billing
+          ports:
+            - containerPort: 8080
+          securityContext:
+            privileged: false
+          livenessProbe:
+            httpGet:
+              path: /price/health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 1
+          readinessProbe:
+            httpGet:
+              path: /price/health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 1

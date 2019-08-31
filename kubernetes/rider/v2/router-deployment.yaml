@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: router-v2
+  labels:
+    version: v2
+    app: router
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: router
+  template:
+    metadata:
+      labels:
+        version: v2
+        app: router
+    spec:
+      containers:
+        - name: router
+          image: claudioed/tracking
+          imagePullPolicy: Always
+          resources:
+            requests:
+              cpu: 50m
+              memory: 10Mi
+            limits:
+              cpu: 100m
+              memory: 500Mi
+          env:
+            - name: SERVICE_NAME
+              value: router
+            - name: SERVICE_VERSION
+              value: v2
+            - name: TARGET_SERVICE_HOST
+              value: http://price:8080/price
+          ports:
+            - containerPort: 8080
+          securityContext:
+            privileged: false
+          livenessProbe:
+            httpGet:
+              path: /router/health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 1
+          readinessProbe:
+            httpGet:
+              path: /router/health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 1

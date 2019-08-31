@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: driver-v2
+  labels:
+    version: v2
+    app: driver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: driver
+  template:
+    metadata:
+      labels:
+        version: v2
+        app: driver
+    spec:
+      containers:
+        - name: driver
+          image: claudioed/tracking
+          imagePullPolicy: Always
+          resources:
+            requests:
+              cpu: 50m
+              memory: 10Mi
+            limits:
+              cpu: 100m
+              memory: 500Mi
+          env:
+            - name: SERVICE_NAME
+              value: driver
+            - name: SERVICE_VERSION
+              value: v2
+            - name: TARGET_SERVICE_HOST
+              value: http://router:8080/router
+          ports:
+            - containerPort: 8080
+          securityContext:
+            privileged: false
+          livenessProbe:
+            httpGet:
+              path: /driver/health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 1
+          readinessProbe:
+            httpGet:
+              path: /driver/health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 1
